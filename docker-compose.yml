@@ -1,0 +1,37 @@
+version: '2'
+
+
+services:
+
+  fedimos-server:
+    build: .
+    image: fedimos/server:0.0.1-alpha
+    container_name: fedimos-server
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"
+    networks:
+      - fedimos-tier
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - DATABASE_NAME=fedimos
+      - MONGODB_URL=mongodb://fedimos-db:27017
+    depends_on:
+      - fedimos-db
+
+  fedimos-db:
+    image: mongo:4
+    container_name: fedimos-db
+    restart: unless-stopped
+    networks:
+      - fedimos-tier
+    volumes:
+      - /data/fedimos-db:/data/db
+      - /data/fedimos-backup:/dump
+
+
+networks:
+
+  fedimos-tier:
+    driver: bridge
