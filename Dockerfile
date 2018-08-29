@@ -1,13 +1,14 @@
 FROM node:8
 
-MAINTAINER dev@samuel.domains
+MAINTAINER dev+fedimos@samuel.domains
 
 
 # Environment variables (may be overwritten).
 ENV PORT=3000 \
 	NODE_ENV=production \
 	DATABASE_NAME=fedimos \
-	MONGODB_URL=mongodb://mongo:27017
+	MONGODB_URL=mongodb://mongo:27017 \
+	REDIS_URL=redis://redis:6379
 
 # Don't run this container as `root` (prefer a built-in unprivileged user).
 USER node

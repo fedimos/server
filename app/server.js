@@ -1,6 +1,5 @@
 const express = require('express');
 const mongodb = require('mongodb');
-// const bodyParser = require('body-parser');
 
 const config  = require('./config');
 const routing = require('./routing');
@@ -16,36 +15,23 @@ mongodb.MongoClient.connect(config.database.url, {useNewUrlParser: true}, functi
 	// Below, we will use this object, representing the Fedimos' DB.
 	database = client.db(config.database.name);
 
-	init_db(database);
-
 	// Let's instantiate our WEB server.
 	const app = express();
-	// app.use(
-	// 	bodyParser.urlencoded({
-	// 		extended: true
-	// 	})
-	// );
 
 	// Let's now apply our routing.
 	routing(app, database);
 
+	const http_server = require('http').createServer(app);
+
+	var socket_io = require('socket.io')(http_server);
+	socket_io.on('connection', function(socket) {
+		/* TO DO */
+	});
+
 	// Server's ready to listen for connections.
-	app.listen(config.application.port, () => {
-		console.log('Fedimos server now listening on : ' + config.application.port);
-	});
+	http_server.listen(config.application.port);
+
+	// app.listen(config.application.port, () => {
+	// 	console.log('Fedimos server now listening on : ' + config.application.port);
+	// });
 });
-
-
-function init_db(database) {
-	database.createCollection('messages', {
-		'validator': {
-			'$and': [
-				{'id':        {'$type': 'objectId',  '$exists': true}},
-				{'threadId':  {'$type': 'objectId',  '$exists': true}},
-				{'content':   {'$type': 'binData',   '$exists': true}},
-				{'userId':    {'$type': 'objectId',  '$exists': true}},
-				{'datetime':  {'$type': 'timestamp', '$exists': true}}
-			]
-		}
-	});
-}
