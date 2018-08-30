@@ -35,6 +35,7 @@ module.exports = {
 						'password',
 						'publicIds',
 						'settings',
+						'sessions',
 						'lastReadTime'
 					],
 					additionalProperties: false,
@@ -78,6 +79,22 @@ module.exports = {
 							additionalProperties: false,
 							properties: {
 								receiptConfirmation: 'boolean'
+							}
+						},
+						sessions: {
+							bsonType: 'object',
+							required: [
+								'name',
+								'token'
+							],
+							additionalProperties: false,
+							properties: {
+								name: {
+									bsonType: 'string'
+								},
+								token: {
+									bsonType: 'string'
+								}
 							}
 						},
 						lastReadTime: {
