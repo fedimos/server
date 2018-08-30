@@ -1,12 +1,12 @@
 const express = require('express');
 
-const messages = require('./messages');
+const activities = require('./activities');
 
 
 module.exports = function(app, database) {
 	var router = express.Router();
 
-	router.use('/messages', messages(database.collection('messages')));
+	router.use('/activities', activities(database.collection('activities')));
 
 	// ...
 
