@@ -17,10 +17,10 @@ services:
       - NODE_ENV=production
       - DATABASE_NAME=fedimos
       - MONGODB_URL=mongodb://fedimos-db:27017
-      #- REDIS_URL=redis://fedimos-cache:6379
+      - REDIS_URL=redis://fedimos-cache:6379
     depends_on:
       - fedimos-db
-      #- fedimos-cache
+      - fedimos-cache
 
   fedimos-db:
     image: mongo:4
@@ -31,12 +31,12 @@ services:
     volumes:
       - /data/fedimos-db:/data/db
 
-  # fedimos-cache:
-  #   image: redis:4
-  #   container_name: fedimos-cache
-  #   restart: unless-stopped
-  #   networks:
-  #     - fedimos-tier
+  fedimos-cache:
+    image: redis:4
+    container_name: fedimos-cache
+    restart: unless-stopped
+    networks:
+      - fedimos-tier
 
 
 networks:

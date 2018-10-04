@@ -1,8 +1,10 @@
 const express = require('express');
 const mongodb = require('mongodb');
 
-const config  = require('./config');
-const routing = require('./routing');
+const config    = require('./config');
+const listeners = require('./listeners');
+const queuing   = require('./queuing');
+const routing   = require('./routing');
 
 
 // Firstly, let's try to connect to the database.
@@ -12,26 +14,29 @@ mongodb.MongoClient.connect(config.database.url, {useNewUrlParser: true}, functi
 		process.exit(1);
 	}
 
-	// Below, we will use this object, representing the Fedimos' DB.
-	database = client.db(config.database.name);
+	// Below, we will use this object, representing the Fedimos DB.
+	const database = client.db(config.database.name);
 
-	// Let's instantiate our WEB server.
-	const app = express();
+	// Registers our back-end asynchronous operations.
+	queuing(database, config.cache.url);
 
-	// Let's now apply our routing.
-	routing(app, database);
+	// Instantiates our Express application.
+	const express_app = express();
 
-	const http_server = require('http').createServer(app);
+	// Applies our routing rules.
+	routing(express_app, database);
 
-	var socket_io = require('socket.io')(http_server);
-	socket_io.on('connection', function(socket) {
-		/* TO DO */
+	// Creates a HTTP server from our Express application.
+	const http_server = require('http').createServer(express_app);
+
+	// ... and finally creates a SocketIO object from the HTTP server.
+	const socket_io = require('socket.io')(http_server);
+	socket_io.on('connection', (socket) => {
+		// Registers our dedicated events listeners for this socket.
+		listeners(socket);
 	});
 
 	// Server's ready to listen for connections.
 	http_server.listen(config.application.port);
-
-	// app.listen(config.application.port, () => {
-	// 	console.log('Fedimos server now listening on : ' + config.application.port);
-	// });
+	console.log(`Fedimos server now listening on : ${config.application.port}`);
 });
