@@ -21,22 +21,27 @@ mongodb.MongoClient.connect(config.database.url, {useNewUrlParser: true}, functi
 	queuing(database, config.cache.url);
 
 	// Instantiates our Express application.
-	const express_app = express();
+	const expressApp = express();
 
 	// Applies our routing rules.
-	routing(express_app, database);
+	routing(expressApp, database);
 
 	// Creates a HTTP server from our Express application.
-	const http_server = require('http').createServer(express_app);
+	const httpServer = require('http').createServer(expressApp);
 
 	// ... and finally creates a SocketIO object from the HTTP server.
-	const socket_io = require('socket.io')(http_server);
-	socket_io.on('connection', (socket) => {
+	const socketIo = require('socket.io')(httpServer);
+	socketIo.on('connection', (socket) => {
 		// Registers our dedicated events listeners for this socket.
 		listeners(socket);
+
+		// Log new connections only in debug mode
+		if (config.application.debug) {
+			console.log(`New connection from : ${socket.client.conn.remoteAddress}`);
+		}
 	});
 
 	// Server's ready to listen for connections.
-	http_server.listen(config.application.port);
+	httpServer.listen(config.application.port);
 	console.log(`Fedimos server now listening on : ${config.application.port}`);
 });
