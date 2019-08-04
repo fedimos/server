@@ -8,10 +8,10 @@
     "migrate": "node node_modules/migrate-mongo/bin/migrate-mongo.js -f app/config/migrations.js"
   },
   "dependencies": {
-    "bull": "^3.5.2",
-    "express": "^4.16.4",
-    "migrate-mongo": "^3.0.5",
-    "mongodb": "^3.1.10",
+    "bull": "^3.10.0",
+    "express": "^4.17.1",
+    "migrate-mongo": "^6.0.1",
+    "mongodb": "^3.2.7",
     "postman": "^0.2.0",
     "redis": "^2.8.0",
     "socket.io": "^2.2.0"
